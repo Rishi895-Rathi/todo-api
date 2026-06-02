@@ -2,48 +2,72 @@ package com.rishi.taskmanager.auth;
 
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
-import java.security.Key;
+
+import javax.crypto.SecretKey;
+import java.nio.charset.StandardCharsets;
 import java.util.Date;
 
 @Component
 public class JwtUtil {
 
-    private static final String SECRET = "your-256-bit-super-secret-key-change-this-in-prod!!";
-    private static final long EXPIRATION_MS = 86400000; // 24 hours
+    @Value("${jwt.secret}")
+    private String secret;
 
-    private final Key key = Keys.hmacShaKeyFor(SECRET.getBytes());
+    @Value("${jwt.expiration-ms:900000}")
+    private long expirationMs;
 
-    public String generateToken(String email, String role) {
+    private static final String ISSUER = "taskmanager";
+
+    private SecretKey getKey() {
+        return Keys.hmacShaKeyFor(secret.getBytes(StandardCharsets.UTF_8));
+    }
+
+    // ── Generate token ────────────────────────────────────────
+    public String generateToken(String userId, String role) {
         return Jwts.builder()
-                .subject(email)
+                .issuer(ISSUER)
+                .subject(userId)
                 .claim("role", role)
                 .issuedAt(new Date())
-                .expiration(new Date(System.currentTimeMillis() + EXPIRATION_MS))
-                .signWith(key)
+                .expiration(new Date(System.currentTimeMillis() + expirationMs))
+                .signWith(getKey())
                 .compact();
     }
 
-    public String extractEmail(String token) {
-        return parseClaims(token).getSubject();
+    // ── Extract userId as String ──────────────────────────────
+    public String extractUserId(String token) {
+        return parseClaims(token).getSubject(); // was parseLong()
     }
 
+    // ── Extract userId as Long ────────────────────────────────
+    public Long extractUserIdAsLong(String token) {
+        return Long.parseLong(parseClaims(token).getSubject());
+    }
+
+    // ── Extract role ──────────────────────────────────────────
     public String extractRole(String token) {
         return parseClaims(token).get("role", String.class);
     }
 
+    // ── Validate token ────────────────────────────────────────
     public boolean isTokenValid(String token) {
         try {
             parseClaims(token);
             return true;
+        } catch (ExpiredJwtException e) {
+            throw new RuntimeException("Token has expired");
         } catch (JwtException | IllegalArgumentException e) {
-            return false;
+            throw new RuntimeException("Invalid token");
         }
     }
 
+    // ── Internal parser ───────────────────────────────────────
     private Claims parseClaims(String token) {
         return Jwts.parser()
-                .verifyWith((javax.crypto.SecretKey) key)
+                .verifyWith(getKey())
+                .requireIssuer(ISSUER)
                 .build()
                 .parseSignedClaims(token)
                 .getPayload();

@@ -1,19 +1,14 @@
 package com.rishi.taskmanager.DTO;
 
-import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotBlank;
+import com.rishi.taskmanager.model.User;
 import lombok.Data;
 
 @Data
 public class RegisterRequest {
-
-    @NotBlank
     private String name;
-
-    @Email
-    @NotBlank
     private String email;
-
-    @NotBlank
     private String password;
+    private User.Role role; // optional — defaults to USER if null
+    private String adminSecret;
 }
+

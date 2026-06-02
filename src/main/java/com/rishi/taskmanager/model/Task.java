@@ -1,5 +1,5 @@
 package com.rishi.taskmanager.model;
-
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
@@ -21,6 +21,11 @@ public class Task {
     private String description;
 
     private boolean completed = false;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id")
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
+    private User owner;
 
     @Column(updatable = false)
     private LocalDateTime createdAt;

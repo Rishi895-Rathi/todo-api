@@ -20,9 +20,9 @@ public class JwtAuthFilter extends OncePerRequestFilter {
 
     private final JwtUtil jwtUtil;
 
-    public JwtAuthFilter(JwtUtil jwtUtil) {
-        this.jwtUtil = jwtUtil;
-    }
+//    public JwtAuthFilter(JwtUtil jwtUtil) {
+//        this.jwtUtil = jwtUtil;
+//    }
 
     @Override
     protected void doFilterInternal(HttpServletRequest request,
@@ -40,12 +40,12 @@ public class JwtAuthFilter extends OncePerRequestFilter {
         String token = authHeader.substring(7); // remove "Bearer "
 
         if (jwtUtil.isTokenValid(token)) {
-            String email = jwtUtil.extractEmail(token);
+            String userId = jwtUtil.extractUserId(token);
             String role = jwtUtil.extractRole(token);
 
             UsernamePasswordAuthenticationToken authentication =
                     new UsernamePasswordAuthenticationToken(
-                            email,
+                            userId,
                             null,
                             List.of(new SimpleGrantedAuthority("ROLE_" + role))
                     );
