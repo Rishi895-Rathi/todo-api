@@ -72,6 +72,6 @@ Spring allows or blocks the request based on your role
 
 
 What's Still Pending
-Link tasks to specific users
-Swagger documentation
-Docker + deployment
+Link tasks to specific users - done 
+Swagger documentation - done
+Docker + deployment - partially
