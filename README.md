@@ -3,43 +3,43 @@ What Problem It Solves ?
 A secure backend system where:
 
 People can register and login with their email/password
-Their passwords are never stored as plain text — always hashed
-After login they get a JWT token — like a digital ID card
+Their passwords are never stored as plain text-always hashed
+After login they get a JWT token-like a digital ID card
 They use that token to access protected routes
 Admins can create/update/delete tasks, users can only read them
 
 ************************************************************************************************
-What We Built — Layer by Layer
+What We Built- Layer by Layer
 *************************************************************************************************
 ## Database Layer
 
 PostgreSQL database connected
 Two tables auto-created by Hibernate:
 
-users — stores registered users with hashed passwords and roles
-task — stores tasks with title, description, timestamps
+users- stores registered users with hashed passwords and roles
+task- stores tasks with title, description, timestamps
 
 
 ## Security Layer
 
-BCrypt password hashing — even if DB is hacked, passwords are unreadable
-JWT Authentication — stateless login system, no sessions needed
-Role based access — USER can only read tasks, ADMIN can create/update/delete
-Admin secret — special key required to register as admin, prevents anyone from making themselves admin
+BCrypt password hashing- even if DB is hacked, passwords are unreadable
+JWT Authentication- stateless login system, no sessions needed
+Role based access- USER can only read tasks, ADMIN can create/update/delete
+Admin secret- special key required to register as admin, prevents anyone from making themselves admin
 
 ## API Layer
 Five task endpoints under /api/v1/tasks:
 
-GET /tasks — get all tasks
-GET /tasks/{id} — get one task
-POST /tasks — create task (ADMIN only)
-PUT /tasks/{id} — update task (ADMIN only)
-DELETE /tasks/{id} — delete task (ADMIN only)
+GET /tasks- get all tasks
+GET /tasks/{id}- get one task
+POST /tasks- create task (ADMIN only)
+PUT /tasks/{id}- update task (ADMIN only)
+DELETE /tasks/{id}- delete task (ADMIN only)
 
 Two auth endpoints under /api/v1/auth:
 
-POST /auth/register — register new user, returns JWT token
-POST /auth/login — login, returns JWT token
+POST /auth/register- register new user, returns JWT token
+POST /auth/login- login, returns JWT token
 
  ## Error Handling Layer
 
@@ -54,7 +54,7 @@ Every error returns clean JSON instead of ugly HTML
 ## Code Quality
 
 Clean package structure (auth, config, controller, model, repository, security, exception, DTO)
-Environment variables via .env — no passwords hardcoded
+Environment variables via .env-no passwords hardcoded
 Timestamps on tasks (createdAt, updatedAt) auto-managed
 
 
