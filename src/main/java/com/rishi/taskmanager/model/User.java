@@ -1,9 +1,11 @@
 package com.rishi.taskmanager.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import java.util.List;
 
 @Entity
 @Table(name = "users")
@@ -22,6 +24,7 @@ public class User {
     @Column(unique = true, nullable = false)
     private String email;
 
+    @JsonIgnore
     @Column(nullable = false)
     private String password;
 
@@ -32,4 +35,8 @@ public class User {
     public enum Role {
         USER, ADMIN
     }
+
+    @OneToMany(mappedBy = "owner")
+    @JsonIgnore
+    private List<Task> tasks;
 }

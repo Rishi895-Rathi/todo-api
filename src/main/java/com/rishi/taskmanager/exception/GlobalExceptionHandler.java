@@ -40,8 +40,8 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(Exception.class)
     public ResponseEntity<Map<String, Object>> handleGeneric(Exception ex) {
         Map<String, Object> body = new HashMap<>();
-        //body.put("error", ex.getMessage());
-        //body.put("cause", ex.getClass().getName());
+//        body.put("error", ex.getMessage());
+//        body.put("cause", ex.getClass().getName());
         body.put("error", "An unexpected error occurred");
         body.put("status", 500);
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(body);

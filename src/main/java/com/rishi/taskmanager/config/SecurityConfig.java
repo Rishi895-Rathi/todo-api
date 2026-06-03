@@ -1,5 +1,9 @@
 package com.rishi.taskmanager.config;
 
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+import java.util.List;
 import com.rishi.taskmanager.security.JwtAuthFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -28,10 +32,11 @@ public class SecurityConfig {
 //    public SecurityConfig(JwtAuthFilter jwtAuthFilter) {
 //        this.jwtAuthFilter = jwtAuthFilter;
 //    }
-
+//http.cors(cors -> cors.configurationSource(corsConfigurationSource()));
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
+                .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .csrf(csrf -> csrf.disable())
                 .sessionManagement(session -> session
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS)) // no sessions, JWT only
@@ -40,6 +45,7 @@ public class SecurityConfig {
                         //swagger documentation
                         .requestMatchers("/swagger-ui/**", "/v3/api-docs/**", "/swagger-ui.html").permitAll()
                         .requestMatchers("/error").permitAll()
+                        .requestMatchers("/api/v1/users/**").hasRole("ADMIN") // for admin
                         .requestMatchers("/api/v1/tasks/**").authenticated() //any logged in user
                         .anyRequest().authenticated()
                 )
@@ -66,5 +72,17 @@ public class SecurityConfig {
                         .roles(user.getRole().name())
                         .build())
                 .orElseThrow(() -> new UsernameNotFoundException("User not found"));
+    }
+    @Bean
+    public CorsConfigurationSource corsConfigurationSource() {
+        CorsConfiguration config = new CorsConfiguration();
+        config.setAllowedOrigins(List.of("http://localhost:5500", "http://127.0.0.1:5500"));
+        config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+        config.setAllowedHeaders(List.of("*"));
+        config.setAllowCredentials(true);
+
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", config);
+        return source;
     }
 }

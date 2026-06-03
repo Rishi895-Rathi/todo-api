@@ -57,9 +57,11 @@ public class JwtUtil {
             parseClaims(token);
             return true;
         } catch (ExpiredJwtException e) {
-            throw new RuntimeException("Token has expired");
+            //throw new RuntimeException("Token has expired");
+            return false;
         } catch (JwtException | IllegalArgumentException e) {
-            throw new RuntimeException("Invalid token");
+            //throw new RuntimeException("Invalid token");
+            return false;
         }
     }
 
